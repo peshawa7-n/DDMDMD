@@ -62,7 +62,7 @@ def upload_to_streamtape(file_path):
         return None
 
 # --- Main Logic for Telegram Handler ---
-@client.on(events.NewMessage(incoming=True, chats=YOUR_PRIVATE_CHANNEL_ID_OR_USERNAME)) # Replace with your channel ID/username
+@client.on(events.NewMessage(incoming=True, chats=-1002384585674)) # Replace with your channel ID/username
 async def handle_new_message(event):
     print(f"Received message in private channel: {event.id}")
     video_path = await download_telegram_video(event)
