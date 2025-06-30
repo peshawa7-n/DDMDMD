@@ -1,45 +1,34 @@
-from pyrogram import Client, filters
-from pytube import YouTube
 import os
-from dotenv import load_dotenv
+import asyncio
+from telethon.sync import TelegramClient
+from telethon.tl.types import InputMessagesFilterVideo
 
-# Load secrets from .env file
-load_dotenv()
+# Use your own Telegram API credentials
 API_ID = int(os.getenv("APITELEGRAM_ID"))
 API_HASH = os.getenv("APITELEGRAM_HASH")
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-PRIVATE_CHANNEL = os.getenv("CHANNEL_ID")
+SESSION_NAME = "session"  # Uses session.session file
 
-app = Client("video_forwarder_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+# Channel to download videos from
+SOURCE_CHAT = os.getenv("CHANNEL_ID")  # Example: -1001234567890 or @channelname
 
-@app.on_message(filters.video | filters.document)
-async def handle_video(client, message):
-    print("Received a video... downloading...")
+# Create download folder
+os.makedirs("downloads", exist_ok=True)
 
-    # Download the video file
-    file_path = await message.download()
-    print(f"Downloaded to {file_path}")
+client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
-    # Send to your private channel
-    await app.send_video(chat_id=PRIVATE_CHANNEL, video=file_path, caption="Forwarded by bot")
-    print("Sent to private channel")
+async def download_videos():
+    await client.start()
+    print("✅ Logged in to Telegram")
 
-    # Clean up
-    os.remove(file_path)
+    # Download all videos from the source channel
+    async for message in client.iter_messages(SOURCE_CHAT, filter=InputMessagesFilterVideo):
+        if message.video:
+            file_name = f"downloads/video_{message.id}.mp4"
+            print(f"⏬ Downloading: {file_name}")
+            await message.download_media(file=file_name)
+            print(f"✅ Saved: {file_name}")
 
-@app.on_message(filters.text & filters.private)
-async def handle_youtube_link(client, message):
-    url = message.text.strip()
-    if "youtube.com" in url or "youtu.be" in url:
-        try:
-            yt = YouTube(url)
-            video = yt.streams.get_highest_resolution()
-            file_path = video.download()
-            print(f"Downloaded from YouTube: {file_path}")
+    print("📁 All videos downloaded!")
 
-            await app.send_video(chat_id=PRIVATE_CHANNEL, video=file_path, caption=f"{yt.title}")
-            os.remove(file_path)
-        except Exception as e:
-            await message.reply(f"Error: {e}")
-
-app.run()
+if __name__ == "__main__":
+    asyncio.run(download_videos())
