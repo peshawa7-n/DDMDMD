@@ -1,2 +1,5 @@
 telethon
 requests
+telethon
+python-dotenv
+
