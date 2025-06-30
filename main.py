@@ -19,7 +19,8 @@ async def download_and_forward_videos():
     # 📥 Download videos
     async for msg in client.iter_messages(SOURCE_CHAT, filter=InputMessagesFilterVideo):
         if msg.video:
-            filename = f"downloads/{msg.video.file_name or msg.id}.mp4"
+            file_name = f"downloads/video_{msg.id}.mp4"
+
             print("⏬ Downloading:", filename)
             await msg.download_media(file=filename)
 
