@@ -2,4 +2,6 @@ telethon
 requests
 telethon
 python-dotenv
+python-telegram-bot==13.15
+
 
