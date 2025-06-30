@@ -10,7 +10,7 @@ SOURCE_CHAT = os.getenv("@RENGTVKURD")  # channel or group username or ID
 TARGET_CHAT = os.getenv("CHANNEL_ID")  # your private channel ID
 SESSION_NAME = "anon"  # Session file name, will be stored
 
-client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
+client = TelegramClient(session.session, API_ID, API_HASH)
 
 async def download_and_forward_videos():
     await client.start()
