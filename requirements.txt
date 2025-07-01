@@ -1,7 +1,18 @@
-telethon
-requests
-telethon
+# Core library for the Telegram Bot API
+python-telegram-bot
+
+# For downloading videos (yt-dlp command-line tool needs to be installed on the system)
+# This is NOT a Python library, but its presence is crucial for the bot's functionality.
+# You'll need to ensure Railway's environment has yt-dlp installed,
+# or handle its installation within your Railway build process (e.g., via a Dockerfile).
+
+# For handling HTTP requests (used by python-telegram-bot internally)
+httpx
+
+# For parsing environment variables (useful for local development, optional for Railway)
 python-dotenv
-python-telegram-bot==13.15
+
+# A production-ready WSGI HTTP server (MANDATORY for webhooks on Railway)
+gunicorn
 
 
